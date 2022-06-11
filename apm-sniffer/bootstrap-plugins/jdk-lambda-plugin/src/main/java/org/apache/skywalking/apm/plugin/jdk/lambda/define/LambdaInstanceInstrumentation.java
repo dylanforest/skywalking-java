@@ -21,17 +21,18 @@ package org.apache.skywalking.apm.plugin.jdk.lambda.define;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.matcher.ElementMatcher;
 import net.bytebuddy.matcher.ElementMatchers;
-import org.apache.skywalking.apm.agent.core.plugin.interceptor.StaticMethodsInterceptPoint;
-import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.ClassStaticMethodsEnhancePluginDefine;
+import org.apache.skywalking.apm.agent.core.plugin.interceptor.ConstructorInterceptPoint;
+import org.apache.skywalking.apm.agent.core.plugin.interceptor.InstanceMethodsInterceptPoint;
+import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.ClassInstanceMethodsEnhancePluginDefine;
 import org.apache.skywalking.apm.agent.core.plugin.match.ClassMatch;
 import org.apache.skywalking.apm.agent.core.plugin.match.IndirectMatch;
 import org.apache.skywalking.apm.agent.core.plugin.match.logical.LogicalMatchOperation;
 import org.apache.skywalking.apm.plugin.jdk.lambda.LambdaConfig;
 import org.apache.skywalking.apm.plugin.jdk.lambda.match.ExcludeInterfaceMatch;
 
-public class LambdaInstrumentation extends ClassStaticMethodsEnhancePluginDefine {
+public class LambdaInstanceInstrumentation extends ClassInstanceMethodsEnhancePluginDefine {
     private static final String LAMBDA_PREFIX = "lambda$";
-    private static final String LAMBDA_METHOD_INTERCEPTOR = "org.apache.skywalking.apm.plugin.jdk.lambda.LambdaMethodInterceptor";
+    private static final String LAMBDA_METHOD_INTERCEPTOR = "org.apache.skywalking.apm.plugin.jdk.lambda.LambdaInstanceMethodInterceptor";
 
     @Override
     protected ClassMatch enhanceClass() {
@@ -44,9 +45,14 @@ public class LambdaInstrumentation extends ClassStaticMethodsEnhancePluginDefine
     }
 
     @Override
-    public StaticMethodsInterceptPoint[] getStaticMethodsInterceptPoints() {
-        return new StaticMethodsInterceptPoint[] {
-                new StaticMethodsInterceptPoint() {
+    public ConstructorInterceptPoint[] getConstructorsInterceptPoints() {
+        return new ConstructorInterceptPoint[0];
+    }
+
+    @Override
+    public InstanceMethodsInterceptPoint[] getInstanceMethodsInterceptPoints() {
+        return new InstanceMethodsInterceptPoint[] {
+                new InstanceMethodsInterceptPoint() {
                     @Override
                     public ElementMatcher<MethodDescription> getMethodsMatcher() {
                         return ElementMatchers.isPrivate().and(ElementMatchers.isSynthetic()).and(ElementMatchers.nameStartsWith(LAMBDA_PREFIX));

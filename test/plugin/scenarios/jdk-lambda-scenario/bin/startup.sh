@@ -18,4 +18,4 @@
 
 home="$(cd "$(dirname $0)"; pwd)"
 
-java -Dskywalking.plugin.lambda.lambda_method_prefixes=test.apache.skywalking. -jar ${agent_opts} ${home}/../libs/jdk-lambda-scenario.jar &
+java -Dskywalking.plugin.jdklambda.lambda_method_prefixes=test.apache.skywalking. -jar ${agent_opts} ${home}/../libs/jdk-lambda-scenario.jar &

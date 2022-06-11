@@ -18,29 +18,30 @@
 
 package org.apache.skywalking.apm.plugin.jdk.lambda;
 
-import java.lang.reflect.Method;
-
 import org.apache.skywalking.apm.agent.core.context.ContextManager;
 import org.apache.skywalking.apm.agent.core.context.trace.AbstractSpan;
+import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance;
+import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
-import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.StaticMethodsAroundInterceptor;
 import org.apache.skywalking.apm.network.trace.component.ComponentsDefine;
 
-public class LambdaMethodInterceptor implements StaticMethodsAroundInterceptor {
-    @Override
-    public void beforeMethod(Class clazz, Method method, Object[] allArguments, Class<?>[] parameterTypes, MethodInterceptResult result) {
-        AbstractSpan span = ContextManager.createLocalSpan(clazz.getName() + "." + method.getName());
+import java.lang.reflect.Method;
+
+public class LambdaInstanceMethodInterceptor implements InstanceMethodsAroundInterceptor {
+        @Override
+    public void beforeMethod(EnhancedInstance objInst, Method method, Object[] allArguments, Class<?>[] argumentsTypes, MethodInterceptResult result) throws Throwable {
+        AbstractSpan span = ContextManager.createLocalSpan(objInst.getClass().getName() + "." + method.getName());
         span.setComponent(ComponentsDefine.JDK_LAMBDA);
     }
 
     @Override
-    public Object afterMethod(Class clazz, Method method, Object[] allArguments, Class<?>[] parameterTypes, Object ret) {
+    public Object afterMethod(EnhancedInstance objInst, Method method, Object[] allArguments, Class<?>[] argumentsTypes, Object ret) throws Throwable {
         ContextManager.stopSpan();
         return ret;
     }
 
     @Override
-    public void handleMethodException(Class clazz, Method method, Object[] allArguments, Class<?>[] parameterTypes, Throwable t) {
+    public void handleMethodException(EnhancedInstance objInst, Method method, Object[] allArguments, Class<?>[] argumentsTypes, Throwable t) {
         if (ContextManager.isActive()) {
             ContextManager.activeSpan().log(t);
         }

@@ -14,4 +14,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-jdk-lambda-plugin=org.apache.skywalking.apm.plugin.jdk.lambda.define.LambdaInstrumentation
+jdk-lambda-instance-plugin=org.apache.skywalking.apm.plugin.jdk.lambda.define.LambdaInstanceInstrumentation
+jdk-lambda-static-plugin=org.apache.skywalking.apm.plugin.jdk.lambda.define.LambdaStaticInstrumentation
